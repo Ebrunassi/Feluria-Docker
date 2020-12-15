@@ -1,0 +1,49 @@
+version: '3.4'
+
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+    ports:
+      - "15432:5432"
+    volumes:
+      - /tmp/database:/var/lib/postgresql/data
+    networks:
+      - postgres-compose-network
+
+  teste-pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "teste@teste.com.br"
+      PGADMIN_DEFAULT_PASSWORD: "docker"
+    ports:
+      - "16543:80"
+    depends_on:
+      - db
+    networks:
+      - postgres-compose-network
+
+  feluria:
+    image: feluria
+    restart: unless-stopped
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /Feluria
+    environment:
+      TZ: America/Sao_Paulo
+    ports:
+      - "8080:8080"
+    command: mvn spring-boot:run
+    depends_on: 
+      - db
+      - teste-pgadmin-compose
+    networks:
+      - postgres-compose-network
+networks: 
+  postgres-compose-network:
+    driver: bridge
