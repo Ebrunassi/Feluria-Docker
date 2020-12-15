@@ -12,5 +12,8 @@ docker-compose up
 Para parar:
 docker-compose down
 
-URL de acesso: 
+URL de acesso do serviço: 
 http://localhost:8080/feluria/login
+
+URL de acesso do PgAdmin4:
+http://localhost:16543
